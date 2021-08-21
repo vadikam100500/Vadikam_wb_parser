@@ -1,6 +1,5 @@
 import asyncio
 import csv
-import time
 from typing import List
 import aiohttp
 
@@ -32,9 +31,9 @@ def parser_main(url):
         else:
             page.append(need_page)
         asyncio.run(get_data(item_urls))
-    print(f"Получено {len(elements)} товаров")
+    print(f'Получено {len(elements)} товаров')
     save_file(elements, file)
-    print(f"Товары сохранены в файл {file}")
+    print(f'Товары сохранены в файл {file}')
 
 
 def items_urls(url):
@@ -73,21 +72,24 @@ async def parser_part(item_url):
     }
     async with aiohttp.ClientSession() as session:
         resp = await session.get(url=item_url, headers=headers)
-        item_cart = BeautifulSoup(await resp.text(), "html.parser")
-        header = item_cart.find_all('h1')
+        item_cart = BeautifulSoup(await resp.text(), 'html.parser')
+        header = item_cart.find_all('h1', class_="same-part-kt__header")
         for part in header:
-            brand = part.find('span').get_text()
-        price = item_cart.find_all('p', class_="price-block__price-wrap")
+            try:
+                brand = part.find('span').get_text()
+            except AttributeError:
+                brand = 'No Brand'
+        price = item_cart.find_all('p', class_='price-block__price-wrap')
         for part in price:
             try:
                 old_price = part.find(
-                    'del', class_="price-block__old-price j-final-saving"
+                    'del', class_='price-block__old-price j-final-saving'
                 ).get_text().replace(u'\xa0', '')
             except AttributeError:
                 old_price = '-'
             try:
                 new_price = part.find(
-                    'span', class_="price-block__final-price"
+                    'span', class_='price-block__final-price'
                 ).get_text(strip=True).replace(u'\xa0', '')
             except AttributeError:
                 new_price = '-'
@@ -99,36 +101,42 @@ async def parser_part(item_url):
             except ValueError:
                 discount = 0
         about = item_cart.find_all(
-            'div', class_="collapsable__content j-description"
+            'div', class_='collapsable__content j-description'
         )
         for part in about:
             try:
                 discription = (
-                    part.find('p', class_="collapsable__text").get_text()
+                    part.find('p', class_='collapsable__text').get_text()
                 )
             except AttributeError:
                 discription = 'Описание отсутствует'
-        elements.append({
-            "Брэнд": brand,
-            "Описание": discription,
-            "Ссылка": item_url,
-            "Цена без скидки": old_price,
-            "Цена со скидкой": new_price,
-            "Скидка в процентах": '%.1f' % discount,
-        })
+        try:
+            elements.append({
+                'Брэнд': brand,
+                'Описание': discription,
+                'Ссылка': item_url,
+                'Цена без скидки': old_price,
+                'Цена со скидкой': new_price,
+                'Скидка в процентах': '%.1f' % discount,
+            })
+        except UnboundLocalError:
+            print(
+                'У вас превышен лимит запросов на страницу,'
+                'либо вас забанили, после завршения, попробуйте снова!'
+            )
 
 
 def save_file(items, path):
     # and here
-    with open(path, "w", newline='') as file:
+    with open(path, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([
-            "Брэнд", "Описание", "Ссылка",
-            "Цена без скидки", "Цена со скидкой", "Скидка в процентах"
+            'Брэнд', 'Описание', 'Ссылка',
+            'Цена без скидки', 'Цена со скидкой', 'Скидка в процентах'
         ])
         for item in items:
             writer.writerow([
-                item["Брэнд"], item["Описание"],
-                item["Ссылка"], item["Цена без скидки"],
-                item["Цена со скидкой"], item["Скидка в процентах"]
+                item['Брэнд'], item['Описание'],
+                item['Ссылка'], item['Цена без скидки'],
+                item['Цена со скидкой'], item['Скидка в процентах']
             ])
