@@ -1,7 +1,6 @@
+import aiohttp
 import asyncio
 import csv
-from typing import List
-import aiohttp
 
 from bs4 import BeautifulSoup
 
@@ -10,14 +9,14 @@ from main import se
 file = 'things.csv'
 url_main = 'https://www.wildberries.ru'
 # final list with all information
-elements: List = []
+elements = []
 
 
 def parser_main(url):
-    # we need this list, to stop parcing if pagination
-    page = [0, 1]
-    while page[-1] != page[-2]:
-        need_page = page[-1]
+    start_page = 0
+    last_page = 1
+    while start_page != last_page:
+        need_page = last_page
         # connect to each page in pagination
         final_url = f'{url}?page={need_page}'
         print(
@@ -27,9 +26,10 @@ def parser_main(url):
         item_urls = items_urls(final_url)
         # put new nuber of next page or stop parcing
         if item_urls:
-            page.append(need_page + 1)
+            start_page = need_page
+            need_page += 1
         else:
-            page.append(need_page)
+            start_page = need_page
         asyncio.run(get_data(item_urls))
     print(f'Получено {len(elements)} товаров')
     save_file(elements, file)
@@ -37,7 +37,6 @@ def parser_main(url):
 
 
 def items_urls(url):
-    # i think its clear
     resp = se.get(url)
     need_page = BeautifulSoup(resp.content, 'html.parser')
     items = need_page.find_all(
@@ -60,7 +59,6 @@ async def get_data(item_urls):
 
 
 async def parser_part(item_url):
-    # i think its also clear
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"

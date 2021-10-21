@@ -1,30 +1,24 @@
-Warning!!!
-=============
+# Warning!!!
+
 **Parsing like this is in not control legal area and can be illegal !!!**
 Project created only for fun and in the course of study
+
+# Vadikam_wb_parser
+
+- Parser for marketplace "Wildberries".
+
+## What I used
 ***
-##### Technologies
+ - Python 3
+ - aiohttp
+ - asyncio
+ - beautifulsoup4
+ - requests.
+
+## How to install
 ***
-- beautifulsoup4==4.9.3
-- certifi==2021.5.30
-- chardet==4.0.0
-- idna==2.10
-- requests==2.25.1
-- soupsieve==2.2.1
-- urllib3==1.26.6
-***
-##### Running a project in dev-mode
-***
-- Install and activate the virtual environment
-- Install dependencies from requirements.txt
-   ```
-   pip install -r requirements.txt
-   ``` 
-- Run the command:
-   ```
-   python3 main.py
-   ```
-   
-#### **Author**
-***
-https://github.com/vadikam100500
+```sh
+$ python3 -m venv 'name of virtual environment'
+$ venv 'name of virtual environment'/Scripts(or bin for linux)/activate
+$ pip install -r requirements.txt
+$ python3 main.py
