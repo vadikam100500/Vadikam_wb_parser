@@ -8,7 +8,7 @@ Project created only for fun and in the course of study
 - Parser for marketplace "Wildberries".
 
 ## What I used
-***
+
  - Python 3
  - aiohttp
  - asyncio
@@ -16,9 +16,10 @@ Project created only for fun and in the course of study
  - requests.
 
 ## How to install
-***
+
 ```sh
 $ python3 -m venv 'name of virtual environment'
 $ venv 'name of virtual environment'/Scripts(or bin for linux)/activate
 $ pip install -r requirements.txt
 $ python3 main.py
+$ <input category that you need>
