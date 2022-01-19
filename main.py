@@ -1,6 +1,5 @@
 import requests
 
-
 url = "https://www.wildberries.ru"
 
 

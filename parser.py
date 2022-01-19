@@ -1,9 +1,8 @@
-import aiohttp
 import asyncio
 import csv
 
+import aiohttp
 from bs4 import BeautifulSoup
-
 from main import se
 
 file = 'things.csv'
@@ -27,7 +26,7 @@ def parser_main(url):
         # put new nuber of next page or stop parcing
         if item_urls:
             start_page = need_page
-            need_page += 1
+            last_page += 1
         else:
             start_page = need_page
         asyncio.run(get_data(item_urls))
